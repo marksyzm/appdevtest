@@ -12,6 +12,7 @@ import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
 export namespace Components {
   interface AppRoot {
     'addSentencesThreshold': number;
+    'path': string;
     'sentencesIncrement': number;
   }
 }
@@ -32,6 +33,7 @@ declare global {
 declare namespace LocalJSX {
   interface AppRoot {
     'addSentencesThreshold'?: number;
+    'path'?: string;
     'sentencesIncrement'?: number;
   }
 

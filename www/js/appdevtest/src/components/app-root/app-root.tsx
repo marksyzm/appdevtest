@@ -6,6 +6,7 @@ import { Component, Host, h, State, Prop } from '@stencil/core';
   shadow: true
 })
 export class AppRoot {
+  private originalSentencesData: string[];
   private allSentences: string[];
   private mainElement: HTMLElement;
   private sentencesContainerElement: HTMLElement;
@@ -13,6 +14,7 @@ export class AppRoot {
 
   @Prop({ reflect: true }) addSentencesThreshold = 80;
   @Prop({ reflect: true }) sentencesIncrement = 20;
+  @Prop() path = '//localhost:8900';
 
   @State() sentencesInView: string[];
   @State() sentencesTotal = 0;
@@ -33,8 +35,9 @@ export class AppRoot {
   }
 
   async fetchSentences() {
-    const response = await fetch('//localhost:8900');
-    this.allSentences = (await response.json())?.random;
+    const response = await fetch(this.path);
+    this.originalSentencesData = (await response.json())?.random;
+    this.allSentences = [...this.originalSentencesData];
   }
 
   /**
@@ -42,6 +45,10 @@ export class AppRoot {
    */
   addSentences() {
     this.sentencesTotal += this.sentencesIncrement;
+    if (this.sentencesTotal > this.originalSentencesData.length) {
+      this.allSentences = [...this.allSentences, ...this.originalSentencesData];
+    }
+
     this.updateSentencesInView();
   }
 
