@@ -1,6 +1,4 @@
-import { Component, h, State } from '@stencil/core';
-
-const SENTENCES_INCREMENT = 20;
+import { Component, Host, h, State, Prop } from '@stencil/core';
 
 @Component({
   tag: 'app-root',
@@ -10,13 +8,23 @@ const SENTENCES_INCREMENT = 20;
 export class AppRoot {
   private allSentences: string[];
   private mainElement: HTMLElement;
+  private sentencesContainerElement: HTMLElement;
+  private lastScrollAmount = 0;
+
+  @Prop({ reflect: true }) addSentencesThreshold = 80;
+  @Prop({ reflect: true }) sentencesIncrement = 20;
 
   @State() sentencesInView: string[];
   @State() sentencesTotal = 0;
+  @State() sentencesContainerMarginTop = 0;
+  @State() sentencesContainerMarginBottom = 0;
 
   constructor() {
     this.onScroll = this.onScroll.bind(this);
     this.setMainElement = this.setMainElement.bind(this);
+    this.setSentencesContainerElement = this.setSentencesContainerElement.bind(
+      this
+    );
   }
 
   async componentDidLoad() {
@@ -33,7 +41,7 @@ export class AppRoot {
    * Add a count of 20 sentences to the list and update sentences in view
    */
   addSentences() {
-    this.sentencesTotal += SENTENCES_INCREMENT;
+    this.sentencesTotal += this.sentencesIncrement;
     this.updateSentencesInView();
   }
 
@@ -41,46 +49,72 @@ export class AppRoot {
    * Update sentences in view according to scroll position
    */
   updateSentencesInView() {
-    const trimSentences = [...this.allSentences];
+    const { height } = this.sentencesContainerElement.getBoundingClientRect();
+    const itemHeight = height / this.sentencesIncrement;
+
+    const hiddenItemCount = Math.floor(this.mainElement.scrollTop / itemHeight);
+    this.sentencesContainerMarginTop = hiddenItemCount * itemHeight;
+    this.sentencesContainerMarginBottom =
+      (this.sentencesTotal - hiddenItemCount + this.sentencesIncrement) *
+      itemHeight;
+
+    const trimSentences = [...this.allSentences].slice(hiddenItemCount);
     trimSentences.length = 20;
     this.sentencesInView = trimSentences;
   }
 
   onScroll() {
     // if at the bottom of list, add more sentences
-    // if (this.mainElement.scrollTop > someHeight) {
-    //   this.addSentences();
-    // }
+    const {
+      height: mainElementHeight
+    } = this.mainElement.getBoundingClientRect();
+
+    if (
+      this.mainElement.scrollTop > this.lastScrollAmount &&
+      this.mainElement.scrollTop + mainElementHeight >=
+        this.mainElement.scrollHeight - this.addSentencesThreshold
+    ) {
+      this.addSentences();
+      return;
+    }
+
+    this.updateSentencesInView();
+
+    this.lastScrollAmount = this.mainElement.scrollTop;
   }
 
   setMainElement(mainElement: HTMLElement) {
     this.mainElement = mainElement;
-    console.log(this.mainElement);
+  }
+
+  setSentencesContainerElement(sentencesContainerElement: HTMLElement) {
+    this.sentencesContainerElement = sentencesContainerElement;
   }
 
   renderSentences() {
-    return this.sentencesInView?.map(sentence => <section>{sentence}</section>);
+    return this.sentencesInView?.map(sentence => <div>{sentence}</div>);
   }
 
   get style() {
-    return { marginTop: '0px' };
+    return {
+      marginTop: `${this.sentencesContainerMarginTop}px`,
+      marginBottom: `${this.sentencesContainerMarginBottom}px`
+    };
   }
 
   render() {
     return (
-      <div>
+      <Host>
         <header>
           <h1>∞ Infinite ↕ Scroll ∞</h1>
         </header>
 
-        <main
-          onScroll={this.onScroll}
-          style={this.style}
-          ref={this.setMainElement}
-        >
-          {this.renderSentences()}
+        <main onScroll={this.onScroll} ref={this.setMainElement}>
+          <section ref={this.setSentencesContainerElement} style={this.style}>
+            {this.renderSentences()}
+          </section>
         </main>
-      </div>
+      </Host>
     );
   }
 }
