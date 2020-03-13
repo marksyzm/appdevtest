@@ -1,4 +1,4 @@
-import { Component, Host, h, State, Prop } from '@stencil/core';
+import { Component, Host, h, State, Prop, Listen } from '@stencil/core';
 
 @Component({
   tag: 'app-root',
@@ -16,6 +16,7 @@ export class AppRoot {
   @Prop({ reflect: true }) sentencesIncrement = 20;
   @Prop() path = '//localhost:8900';
 
+  @State() ready = false;
   @State() sentencesInView: string[];
   @State() sentencesTotal = 0;
   @State() sentencesContainerMarginTop = 0;
@@ -32,6 +33,11 @@ export class AppRoot {
   async componentDidLoad() {
     await this.fetchSentences();
     this.addSentences();
+  }
+
+  @Listen('deviceready', { target: 'document', capture: true })
+  onDeviceReady() {
+    this.ready = true;
   }
 
   async fetchSentences() {
@@ -110,6 +116,10 @@ export class AppRoot {
   }
 
   render() {
+    /* if (!this.ready) {
+      return;
+    } */
+
     return (
       <Host>
         <header>
