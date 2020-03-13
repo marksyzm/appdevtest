@@ -1,6 +1,6 @@
 # appdevtest
 
-To run use `npm i`, run the server in a separate terminal with `npm run start.api` and finally run `cordova run nameofplatform` with name of platform replaced with `browser`, `ios`, or `android`.
+To run use `npm i`, run the server in a separate terminal with `npm run start.api`, add the platforms with `cordova platform add <platform>` and finally run `cordova run <platform>` with name of platform replaced with `browser`, `ios`, or `android`.
 
 ## Improvements
 
