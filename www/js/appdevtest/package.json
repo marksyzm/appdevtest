@@ -13,5 +13,8 @@
   "devDependencies": {
     "@stencil/core": "^1.8.8"
   },
+  "prettier": {
+    "singleQuote": true
+  },
   "license": "MIT"
 }
