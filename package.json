@@ -7,6 +7,7 @@
   "scripts": {
     "test": "cd www/js/appdevtest && npm test && cd ../../..",
     "postinstall": "cd api && npm i && cd ../www/js/appdevtest && npm i && npm run build",
+    "build": "cd www/js/appdevtest && npm run build",
     "start.api": "cd api && npm start"
   },
   "keywords": [
@@ -28,8 +29,8 @@
     },
     "platforms": [
       "android",
-      "ios",
-      "browser"
+      "browser",
+      "ios"
     ]
   }
 }

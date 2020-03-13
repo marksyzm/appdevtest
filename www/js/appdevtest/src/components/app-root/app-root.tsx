@@ -14,7 +14,7 @@ export class AppRoot {
 
   @Prop({ reflect: true }) addSentencesThreshold = 80;
   @Prop({ reflect: true }) sentencesIncrement = 20;
-  @Prop() path = '//localhost:8900';
+  @Prop() path = 'http://localhost:8900';
 
   @State() ready = false;
   @State() sentencesInView: string[];
@@ -116,9 +116,9 @@ export class AppRoot {
   }
 
   render() {
-    /* if (!this.ready) {
-      return;
-    } */
+    if (!this.ready) {
+      return <h1>Preparing!</h1>;
+    }
 
     return (
       <Host>

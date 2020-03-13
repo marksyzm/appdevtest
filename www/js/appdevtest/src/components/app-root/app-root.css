@@ -25,6 +25,8 @@ main {
   overflow: scroll;
   flex-shrink: 1;
   height: calc(100vh - 56px);
+  max-height: 810px;
+  -webkit-overflow-scrolling: touch;
 }
 
 section div {
