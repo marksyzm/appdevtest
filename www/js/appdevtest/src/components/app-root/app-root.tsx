@@ -123,7 +123,7 @@ export class AppRoot {
     return (
       <Host>
         <header>
-          <h1>∞ Infinite ↕ Scroll ∞</h1>
+          <h1>Infinite Scroll</h1>
         </header>
 
         <main onScroll={this.onScroll} ref={this.setMainElement}>
